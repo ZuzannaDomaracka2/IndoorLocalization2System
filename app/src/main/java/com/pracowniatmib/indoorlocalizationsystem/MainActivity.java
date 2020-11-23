@@ -2,7 +2,9 @@ package com.pracowniatmib.indoorlocalizationsystem;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     Button buttonEnableBt;
     WifiManager wifiManager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         buttonCheckPermissions = findViewById(R.id.buttonCheckPermissionsMenu);
         buttonEnableBt = findViewById(R.id.buttonEnableBtMenu);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        int REQUEST_ENABLE_BT = 1;
+
+
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mReceiver, filter);
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,15 +65,49 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (mBluetoothAdapter == null) {
                     Toast.makeText(MainActivity.this, "DEVICE DOES NOT SUPPORT BLUETOOTH!", Toast.LENGTH_SHORT).show();
-                } else if (mBluetoothAdapter.isEnabled()) {
-                    Toast.makeText(MainActivity.this, "BLUETOOTH IS ENABLED!", Toast.LENGTH_SHORT).show();
-                    buttonEnableBt.setText(R.string.disable_bluetooth);
+                } else if (!mBluetoothAdapter.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 } else {
-                    Toast.makeText(MainActivity.this, "BLUETOOTH IS DISABLED!", Toast.LENGTH_SHORT).show();
-                    buttonEnableBt.setText(R.string.enable_bluetooth);
+                    Toast.makeText(MainActivity.this, "BLUETOOTH IS ENABLED!", Toast.LENGTH_SHORT).show();
+                    buttonEnableBt.setText("BLUETOOTH IS ENABLED");
                 }
-
             }
+
         });
     }
+
+    final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        buttonEnableBt.setText("BLUETOOTH IS DISABLED");
+                        Toast.makeText(MainActivity.this, "BLUETOOTH IS Disabled!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        buttonEnableBt.setText("DISABLING BLUETOOTH...");
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        buttonEnableBt.setText("BLUETOOTH IS ENABLED");
+                        Toast.makeText(MainActivity.this, "BLUETOOTH IS ENABLED!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        buttonEnableBt.setText("ENABLING BLUETOOTH...");
+                        break;
+                }
+            }
+        }
+    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+    }
 }
+
