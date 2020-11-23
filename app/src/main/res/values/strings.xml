@@ -16,4 +16,7 @@
     <string name="update_map">UPDATE\nMAP</string>
     <string name="sensor_mode">SENSOR\nMODE</string>
     <string name="algorithm_mode">ALGORITHM\nMODE</string>
+    <string name="disabling_bluetooth">DISABLING BLUETOOTH...</string>
+    <string name="bluetooth_is_enabled">BLUETOOTH IS ENABLED</string>
+    <string name="enabling_bluetooth">ENABLING BLUETOOTH...</string>
 </resources>

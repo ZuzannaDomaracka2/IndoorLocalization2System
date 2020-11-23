@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "103737203523",
+    "firebase_url": "https://indoor-localization-syst-f9c6c.firebaseio.com",
+    "project_id": "indoor-localization-syst-f9c6c",
+    "storage_bucket": "indoor-localization-syst-f9c6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103737203523:android:e113c356c06528416aedf6",
+        "android_client_info": {
+          "package_name": "com.pracowniatmib.indoorlocalizationsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103737203523-73o7cf4kh5e6u0ldd082qa4rf6otmcn8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARU_3o4ERXAe8QGzhHFkj2QpUw6APf26M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103737203523-73o7cf4kh5e6u0ldd082qa4rf6otmcn8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
