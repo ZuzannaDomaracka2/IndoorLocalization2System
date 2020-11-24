@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Collection;
@@ -178,6 +179,23 @@ public class MainActivity extends AppCompatActivity {
         dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("coordinates").child("y").setValue("1");
         dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("power").setValue("1");
     }
+
+
+
+    public void updateUserDatabase(String buildingId, String buildingFloor, float x, float y) {
+        Map<String, Object> coordinateHashMap = new HashMap<>();
+        coordinateHashMap.put("x", String.valueOf(x));
+        coordinateHashMap.put("y", String.valueOf(y));
+
+        Map<String, Object> buildingHashMap = new HashMap<>();
+        buildingHashMap.put("building_floor", buildingFloor);
+        buildingHashMap.put("building_id", buildingId);
+
+        FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("coordinates").updateChildren(coordinateHashMap);
+        FirebaseDatabase.getInstance().getReference().child("Users").child(userId).updateChildren(buildingHashMap);
+    }
+
+
 
     public void checkPermissions(Context context) {
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
