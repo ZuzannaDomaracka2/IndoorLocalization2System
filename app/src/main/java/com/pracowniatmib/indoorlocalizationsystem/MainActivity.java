@@ -14,9 +14,12 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
     int REQUEST_ENABLE_BT = 1;
     String userId;
 
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseReference dataBuildings;
     DatabaseReference dataUsers;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
         dataUsers = FirebaseDatabase.getInstance().getReference("Users");
         addBuildings();
+
 
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(bluetoothStateListener, filter);
@@ -195,5 +201,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(bluetoothStateListener);
         super.onStop();
     }
+
+
 }
 
