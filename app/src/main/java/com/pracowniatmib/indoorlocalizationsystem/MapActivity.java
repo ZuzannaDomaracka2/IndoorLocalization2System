@@ -18,6 +18,7 @@ public class MapActivity extends AppCompatActivity {
 
     private List<Transmitter> wifiTranmitter;
     private List<Transmitter> bleTranmitter;
+    private List<User> user;
 
     FragmentManager fragmentManager;
     MapFragment mapFragment;
@@ -42,6 +43,7 @@ public class MapActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         wifiTranmitter = new LinkedList<>();
         bleTranmitter = new LinkedList<>();
+        user = new LinkedList<>();
 
         fragmentManager = getSupportFragmentManager();
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
