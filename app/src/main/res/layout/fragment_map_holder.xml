@@ -9,30 +9,48 @@
 
     <ImageView
         android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="310dp"
+        android:layout_height="630dp"
         android:contentDescription="Map View"
         android:scaleX="3"
         android:scaleY="3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:src="@drawable/default_indoor_map"/>
+        app:layout_constraintVertical_bias="0.621"
+        tools:src="@drawable/default_indoor_map" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleX="3"
-        android:scaleY="3"
-        android:src="@drawable/ils_logo"
+        android:id="@+id/blePointView"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="188dp"
+        android:layout_marginBottom="136dp"
+        android:src="@drawable/ble_point"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mapView"
-        tools:src="@drawable/ils_logo" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/wifiPointView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="340dp"
+        android:layout_marginBottom="500dp"
+        android:src="@drawable/wifi_point"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/otherUserCursorView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="692dp"
+        android:rotation="180"
+        android:src="@drawable/other_user_cursor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

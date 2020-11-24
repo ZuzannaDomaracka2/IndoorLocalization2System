@@ -31,6 +31,7 @@ public class MapHolderFragment extends Fragment {
 
         //TODO: when creating a new ImageView on the map, we need to add it to the viewList
         //TODO: when deleting an ImageView from the map, we need to remove it from the viewList
+
         viewList = getAllViews(constraintLayout);
     }
 
