@@ -23,6 +23,8 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -121,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         dataUsers.child(userId).child("building_id").setValue("123");
         dataUsers.child(userId).child("coordinates").child("x").setValue("0");
         dataUsers.child(userId).child("coordinates").child("y").setValue("0");
-
     }
 
     public void addBuildings(){

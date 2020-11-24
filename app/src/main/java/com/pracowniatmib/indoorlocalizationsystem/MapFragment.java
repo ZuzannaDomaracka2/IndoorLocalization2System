@@ -18,6 +18,9 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class MapFragment extends Fragment {
     private ImageView cursorMarkerView;
     private FragmentManager fragmentManager;
