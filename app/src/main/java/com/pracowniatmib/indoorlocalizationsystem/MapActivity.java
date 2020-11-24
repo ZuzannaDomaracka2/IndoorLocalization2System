@@ -1,7 +1,5 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
-import android.graphics.BitmapFactory;
-import android.icu.number.Scale;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -17,7 +15,7 @@ import java.util.Objects;
 public class MapActivity extends AppCompatActivity {
 
     FragmentManager fragmentManager;
-    MapFragment mapViewFragment;
+    MapFragment mapFragment;
 
     Button buttonSettings;
     Button buttonUpdateMap;
@@ -54,9 +52,9 @@ public class MapActivity extends AppCompatActivity {
         buttonTestMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("X: " + mapViewFragment.getMapX() + ", Y: " + mapViewFragment.getMapY());
-                mapViewFragment.moveMap(0,10);
-                mapViewFragment.rotateCursor(30);
+                System.out.println("X: " + mapFragment.getMapX() + ", Y: " + mapFragment.getMapY());
+                mapFragment.moveMap(0,10);
+                mapFragment.rotateCursor(30);
             }
         });
 
@@ -91,32 +89,32 @@ public class MapActivity extends AppCompatActivity {
         buttonUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mapViewFragment.moveMap(0, 10);
-                mapViewFragment.setCursorRotation(0);
+                mapFragment.moveMap(0, 10);
+                mapFragment.setCursorRotation(0);
             }
         });
 
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mapViewFragment.moveMap(-10, 0);
-                mapViewFragment.setCursorRotation(90);
+                mapFragment.moveMap(-10, 0);
+                mapFragment.setCursorRotation(90);
             }
         });
 
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mapViewFragment.moveMap(10, 0);
-                mapViewFragment.setCursorRotation(270);
+                mapFragment.moveMap(10, 0);
+                mapFragment.setCursorRotation(270);
             }
         });
 
         buttonDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mapViewFragment.moveMap(0, -10);
-                mapViewFragment.setCursorRotation(180);
+                mapFragment.moveMap(0, -10);
+                mapFragment.setCursorRotation(180);
             }
         });
     }
@@ -124,10 +122,9 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        mapViewFragment = (MapFragment) fragmentManager.findFragmentById(R.id.mapViewFragment);
-        //mapViewFragment.setMap(R.drawable.default_indoor_map);
-        mapViewFragment.setMap(R.raw.polanka_0p_10cm);
-        mapViewFragment.moveMap(400, -400);
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.mapViewFragment);
+        //mapFragment.setMap(R.raw.polanka_0p_10cm);
+        //mapFragment.moveMap(400, -400);
     }
 
     @Override
@@ -143,8 +140,8 @@ public class MapActivity extends AppCompatActivity {
         {
             scaleFactor *= scaleGestureDetector.getScaleFactor();
             scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 8.0f));
-            mapViewFragment.getView().setScaleX(scaleFactor);
-            mapViewFragment.getView().setScaleY(scaleFactor);
+            mapFragment.getView().setScaleX(scaleFactor);
+            mapFragment.getView().setScaleY(scaleFactor);
             return true;
         }
     }

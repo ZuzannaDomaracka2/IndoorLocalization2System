@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.Path;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.ScaleGestureDetector;
@@ -17,40 +19,39 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
 public class MapFragment extends Fragment {
-
-    private ImageView mapView;
     private ImageView cursorMarkerView;
+    private FragmentManager fragmentManager;
+    private MapHolderFragment mapHolderFragment;
     private int cursorCurrentAngle = 0;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        mapView = view.findViewById(R.id.mapView);
         cursorMarkerView = view.findViewById(R.id.cursorMarker);
-        mapView.setImageResource(R.drawable.default_indoor_map);
+
+        fragmentManager = getChildFragmentManager();
+        mapHolderFragment = (MapHolderFragment) fragmentManager.findFragmentById(R.id.mapHolderFragment);
+
     }
 
     public void setMap(int resourceId)
     {
-        mapView.setImageResource(resourceId);
+        mapHolderFragment.setMap(resourceId);
     }
 
     public void moveMap(float x, float y) {
-        Path path = new Path();
-        path.moveTo(mapView.getX() + x, mapView.getY() + y);
-        ObjectAnimator animator = ObjectAnimator.ofFloat(mapView, View.X, View.Y, path);
-        animator.start();
+        mapHolderFragment.moveMap(x, y);
     }
 
     public float getMapX()
     {
-        return mapView.getX();
+        return mapHolderFragment.getMapX();
     }
 
     public float getMapY()
     {
-        return mapView.getY();
+        return mapHolderFragment.getMapY();
     }
 
     public void rotateCursor(int angle) {
