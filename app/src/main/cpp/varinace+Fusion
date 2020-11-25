@@ -72,9 +72,7 @@ vector <double> Fusion(vector<double>varianceT, vector<double> varianceF, vector
             FinalVarianceF = +varianceF[i];
         }
         FinalVarianceF = FinalVarianceF / sizeF;
-
-        FinalVarianceD = FinalVarianceD / sizeD;
-        FinalVarianceF = FinalVarianceF / sizeF;
+        
 
         double v1 = (FinalVarianceT) / (FinalVarianceF + FinalVarianceT);
         double v2 = (FinalVarianceD) / (FinalVarianceF + FinalVarianceT);
