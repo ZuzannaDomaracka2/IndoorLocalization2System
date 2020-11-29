@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="Map View"
+        android:adjustViewBounds="true"
         android:scaleX="3"
         android:scaleY="3"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,17 +23,15 @@
         app:layout_constraintVertical_bias="0.0"
         tools:src="@drawable/default_indoor_map"/>
 
-    <ImageView
-        android:id="@+id/imageView"
+    <TextView
+        android:id="@+id/debugMapHolderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleX="3"
-        android:scaleY="3"
-        android:src="@drawable/ils_logo"
+        android:text="TextView"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mapView"
-        tools:src="@drawable/ils_logo" />
+        app:layout_constraintStart_toStartOf="@+id/mapView"
+        app:layout_constraintTop_toTopOf="@+id/mapView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

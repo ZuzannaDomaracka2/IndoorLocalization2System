@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Path;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,25 +17,38 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class MapFragment extends Fragment {
+
+    private EditText xEditText;
+    private EditText yEditText;
+    private Button goButton;
     private ImageView cursorMarkerView;
     private FragmentManager fragmentManager;
     private MapHolderFragment mapHolderFragment;
+    private OnMapPositionChangeListener onMapPositionChangeListener;
     private int cursorCurrentAngle = 0;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
         cursorMarkerView = view.findViewById(R.id.cursorMarker);
 
         fragmentManager = getChildFragmentManager();
         mapHolderFragment = (MapHolderFragment) fragmentManager.findFragmentById(R.id.mapHolderFragment);
+
+        xEditText = view.findViewById(R.id.inputXTextNumber);
+        yEditText = view.findViewById(R.id.inputYTextNumber);
+        goButton = view.findViewById(R.id.buttonGo);
+
+        goButton.setOnClickListener(view1 -> mapHolderFragment.setMapPosition(Float.parseFloat(xEditText.getText().toString()), Float.parseFloat(yEditText.getText().toString())));
 
     }
 
@@ -45,6 +59,7 @@ public class MapFragment extends Fragment {
 
     public void moveMap(float x, float y) {
         mapHolderFragment.moveMap(x, y);
+        onMapPositionChangeListener.onMapPositionChange(mapHolderFragment.getMapX(), mapHolderFragment.getMapY());
     }
 
     public float getMapX()
@@ -77,6 +92,11 @@ public class MapFragment extends Fragment {
         rotate.setInterpolator(new LinearInterpolator());
         cursorMarkerView.startAnimation(rotate);
         cursorCurrentAngle = angle;
+    }
+
+    public void setOnMapPositionChangeListener(OnMapPositionChangeListener onMapPositionChangeListener)
+    {
+        this.onMapPositionChangeListener = onMapPositionChangeListener;
     }
 
     public MapFragment() {

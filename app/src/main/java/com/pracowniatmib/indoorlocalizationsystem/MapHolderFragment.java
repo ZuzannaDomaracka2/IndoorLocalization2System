@@ -1,17 +1,20 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
 import android.animation.ObjectAnimator;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Path;
 import android.os.Bundle;
-
-import androidx.constraintlayout.solver.state.State;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
@@ -20,18 +23,50 @@ public class MapHolderFragment extends Fragment {
     private ImageView mapView;
     private ConstraintLayout constraintLayout;
     private ArrayList<View> viewList;
+    private TextView debugTextView;
+
+    private int currentMapImageResId;
+
+    private float mapScale;
+    private float mapViewWidth;
+    private float mapViewHeight;
+    private float actualMapImageWidth;
+    private float actualMapImageHeight;
+    private float scaledMapImageWidth;
+    private float scaledMapImageHeight;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
         constraintLayout = view.findViewById(R.id.mapHolderConstraintLayout);
         mapView = view.findViewById(R.id.mapView);
-        mapView.setImageResource(R.drawable.default_indoor_map);
+        debugTextView = view.findViewById(R.id.debugMapHolderTextView);
+        setMap(R.drawable.default_indoor_map);
 
         //TODO: when creating a new ImageView on the map, we need to add it to the viewList
         //TODO: when deleting an ImageView from the map, we need to remove it from the viewList
         viewList = getAllViews(constraintLayout);
+    }
+
+    private void updateScale() {
+        mapViewWidth = mapView.getWidth();
+        mapViewHeight = mapView.getHeight();
+        int[] currentMapImageActualDimensions = getCurrentMapImageActualDimensions();
+        actualMapImageWidth = currentMapImageActualDimensions[0];
+        actualMapImageHeight = currentMapImageActualDimensions[1];
+        scaledMapImageWidth = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicWidth();
+        scaledMapImageHeight = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicHeight();
+        mapScale = mapView.getScaleX();
+        debugTextView.setText("mapViewWidth = " + mapViewWidth + "\n" +
+                            "mapViewHeight = " + mapViewHeight + "\n" +
+                            "actualMapImageWidth = " + actualMapImageWidth + "\n" +
+                            "actualMapImageHeight = " + actualMapImageHeight + "\n" +
+                            "scaledMapImageWidth = " + scaledMapImageWidth + "\n" +
+                            "scaledMapImageHeight = " + scaledMapImageHeight + "\n" +
+                            "mapScale = " + mapScale + "\n" +
+                            "finalMapImageWidth = " + mapScale * scaledMapImageWidth + "\n" +
+                            "finalMapImageHeight = " + mapScale * scaledMapImageHeight + "\n");
     }
 
     private ArrayList<View> getAllViews(ConstraintLayout constraintLayout) {
@@ -46,6 +81,18 @@ public class MapHolderFragment extends Fragment {
     public void setMap(int resourceId)
     {
         mapView.setImageResource(resourceId);
+        currentMapImageResId = resourceId;
+        updateScale();
+    }
+
+    private int[] getCurrentMapImageActualDimensions()
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), currentMapImageResId, o);
+        int width = o.outWidth;
+        int height = o.outHeight;
+        return new int[]{width, height};
     }
 
     public void moveMap(float x, float y) {
@@ -61,6 +108,24 @@ public class MapHolderFragment extends Fragment {
         path.moveTo(view.getX() + x, view.getY() + y);
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path);
         animator.start();
+        updateScale();
+    }
+
+    public void setViewPosition(View view, float x, float y)
+    {
+        Path path = new Path();
+        path.moveTo(x, y);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path);
+        animator.start();
+        updateScale();
+    }
+
+    public void setMapPosition(float x, float y)
+    {
+        for(View view : viewList)
+        {
+            setViewPosition(view, x, y);
+        }
     }
 
     public float getMapX()
