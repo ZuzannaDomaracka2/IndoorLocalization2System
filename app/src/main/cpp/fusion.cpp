@@ -3,18 +3,18 @@
 #include <vector>
 using namespace std;
 
-double varince(vector<double> vector1)
+double variance(vector<double> vector1)
 {
     double variance = 0.0;
     double average = 0.0;
-    double sume = 0.0;
+    double sum = 0.0;
     int size = (int)vector1.size();
     for (int i = 0; i < size; i++)
     {
-        sume += vector1[i];
+        sum += vector1[i];
     }
 
-    average = sume / size;
+    average = sum / size;
 
     for (int i = 0; i < size; i++)
     {
@@ -23,8 +23,7 @@ double varince(vector<double> vector1)
     return variance / size;
 }
 
-
-vector <double> Fusion(vector<double>varianceT, vector<double> varianceF, vector<double>varianceD, bool DeadReckoning, vector<double> TabT,vector <double> TabF, vector<double> TabD, vector<double> Tab)
+vector <double> Fusion(vector<double>varianceT, vector<double> varianceF, vector<double>varianceD, bool deadReckoning, vector<double> TabT, vector <double> TabF, vector<double> TabD, vector<double> Tab)
 {
     int sizeT = varianceT.size();
     int sizeF = varianceF.size();
@@ -35,19 +34,19 @@ vector <double> Fusion(vector<double>varianceT, vector<double> varianceF, vector
     double X = 0.0;
     double Y = 0.0;
 
-    if (DeadReckoning) {
+    if (deadReckoning) {
         for (int i = 0; i < sizeT; i++) {
-            FinalVarianceT = +varianceT[i];
+            FinalVarianceT += varianceT[i];
         }
         FinalVarianceT = FinalVarianceT / sizeT;
 
         for (int i = 0; i < sizeF; i++) {
-            FinalVarianceF = +varianceF[i];
+            FinalVarianceF += varianceF[i];
         }
         FinalVarianceF = FinalVarianceF / sizeF;
 
         for (int i = 0; i < sizeD; i++) {
-            FinalVarianceD = +varianceD[i];
+            FinalVarianceD += varianceD[i];
         }
 
         FinalVarianceD = FinalVarianceD / sizeD;
@@ -72,7 +71,6 @@ vector <double> Fusion(vector<double>varianceT, vector<double> varianceF, vector
             FinalVarianceF = +varianceF[i];
         }
         FinalVarianceF = FinalVarianceF / sizeF;
-        
 
         double v1 = (FinalVarianceT) / (FinalVarianceF + FinalVarianceT);
         double v2 = (FinalVarianceD) / (FinalVarianceF + FinalVarianceT);
@@ -83,30 +81,24 @@ vector <double> Fusion(vector<double>varianceT, vector<double> varianceF, vector
         Tab.push_back(Y);
         return Tab;
     }
-    
 }
-
-
 
 int main()
 {
-
     vector<double> vector1{ 53.24, 54.38, 65.33, 43.24, 34.38, 70.3 };
 
-
-    vector<double> TabT{ 3,4 }; // tablice koordynatów z różych metod
-    vector<double> TabF{ 2,5 };
-    vector<double> TabD{ 6,7 };
+    vector<double> TabT{3,4}; // tablice koordynatów z różych metod
+    vector<double> TabF{2,5};
+    vector<double> TabD{6,7};
     vector<double> Tab;// tablica do wyników-ostateczne koordynaty
 
-    vector<double> varianceTrilateration{ 1,7,4}; //wektor wariancji z pomiarów mocy czujników, które brały udział przy obliczaniu koordynatów
-    vector<double> varianceFingerprinting{ 6,3,9 }; //wektor wariancji z pomiarów mocy czujników, które brały udział przy obliczaniu koordynatów
-    vector<double> varianceDeadReckoning{2,2,3  }; //wektor wariancji z pomiarów mocy czujników, które brały udział przy obliczaniu koordynatów
+    vector<double> varianceTrilateration{1,7,4}; //wektor wariancji z pomiarów mocy czujników, które brały udział przy obliczaniu koordynatów
+    vector<double> varianceFingerprinting{6,3,9}; //wektor wariancji z pomiarów mocy czujników, które brały udział przy obliczaniu koordynatów
+    vector<double> varianceDeadReckoning{2,2,3}; //wektor wariancji z pomiarów mocy czujników, które brały udział przy obliczaniu koordynatów
     bool DeadReckoningAvilable = true;
-
  
-    cout << endl << varince(vector1);
-    Tab=Fusion(varianceTrilateration, varianceFingerprinting, varianceDeadReckoning, DeadReckoningAvilable, TabT, TabF, TabD, Tab);
+    cout << endl << variance(vector1);
+    Tab = Fusion(varianceTrilateration, varianceFingerprinting, varianceDeadReckoning, DeadReckoningAvilable, TabT, TabF, TabD, Tab);
     for (int i = 0; i < 2; i++)
         cout << endl << Tab.at(i) << endl;
     return 0;
