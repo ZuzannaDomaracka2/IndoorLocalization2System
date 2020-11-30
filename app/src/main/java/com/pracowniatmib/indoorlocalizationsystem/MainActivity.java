@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_LOCATION = 2;
     final int REQUEST_BLUETOOTH = 3;
     final int REQUEST_WIFI = 4;
+    MyApplication myApplication = null;
 
     String userId;
 
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        myApplication = (MyApplication) getApplication();
 
         //get handles to UI objects
         buttonStart = findViewById(R.id.buttonStartMenu);

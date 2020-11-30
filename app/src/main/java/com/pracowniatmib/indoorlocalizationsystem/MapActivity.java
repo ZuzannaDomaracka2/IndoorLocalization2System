@@ -170,4 +170,12 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     public void addNewBleTransmitter(String id,  double xCoord, double yCoord, double transmitPower){
         bleTransmitterList.add(new Transmitter(id, xCoord, yCoord, transmitPower));
     }
+    public void deleteWifFiTransmitters()
+    {
+        wifiTransmitterList.clear();
+    }
+    public void deleteBleTransmitter()
+    {
+        bleTransmitterList.clear();
+    }
 }
