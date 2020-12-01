@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
            }
        });
 
-        //return building_id ;
+
     }
     public  void  download_map_1()
     {
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //return building_id ;
+
     }
     public  void  download_map_2()
     {
@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //return building_id ;
+
     }
 
     public void downloadFiles(Context context, String filename, String fileExtension,String destinationDirectory,String url)
