@@ -2,12 +2,14 @@ package com.pracowniatmib.indoorlocalizationsystem;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,13 +19,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 1;
@@ -43,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseReference dataBuildings;
     DatabaseReference dataUsers;
+    StorageReference storageReference;
+    StorageReference storeref;
+    FirebaseStorage firebaseStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         //register Bluetooth state update receiver
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(bluetoothStateListener, filter);
+
+
 
         //set OnClickListeners to buttons
         buttonStart.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), MapActivity.class)));
@@ -79,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "BLUETOOTH IS ENABLED!", Toast.LENGTH_SHORT).show();
                 buttonEnableBt.setText("BLUETOOTH IS ENABLED");
             }
+
+
         });
 
         //read/write from/to database
@@ -225,6 +240,79 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public  void  download_map_0()
+    {
+       storageReference=firebaseStorage.getInstance().getReference();
+       storeref=storageReference.child("Polanka_0p_10cm.bmp");
+       storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+           @Override
+           public void onSuccess(Uri uri) {
+               String url=uri.toString();
+               downloadFiles(MainActivity.this,"Polanka_Op_10cm",".bmp",DIRECTORY_DOWNLOADS,url);
+
+           }
+       }).addOnFailureListener(new OnFailureListener() {
+           @Override
+           public void onFailure(@NonNull Exception e) {
+
+           }
+       });
+
+        //return building_id ;
+    }
+    public  void  download_map_1()
+    {
+        storageReference=firebaseStorage.getInstance().getReference();
+        storeref=storageReference.child("Polanka_1p_10cm.bmp");
+        storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                String url=uri.toString();
+                downloadFiles(MainActivity.this,"Polanka_1p_10cm",".bmp",DIRECTORY_DOWNLOADS,url);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+        //return building_id ;
+    }
+    public  void  download_map_2()
+    {
+        storageReference=firebaseStorage.getInstance().getReference();
+        storeref=storageReference.child("Polanka_2p_10cm.bmp");
+        storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                String url=uri.toString();
+                downloadFiles(MainActivity.this,"Polanka_2p_10cm",".bmp",DIRECTORY_DOWNLOADS,url);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+        //return building_id ;
+    }
+
+    public void downloadFiles(Context context, String filename, String fileExtension,String destinationDirectory,String url)
+    {
+        DownloadManager downloadManager=(DownloadManager) activityContext.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri= Uri.parse(url);
+        DownloadManager.Request request=new DownloadManager.Request(uri);
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context,destinationDirectory,filename+fileExtension);
+        downloadManager.enqueue(request);
+
+    }
 
     @Override
     protected void onStop() {
