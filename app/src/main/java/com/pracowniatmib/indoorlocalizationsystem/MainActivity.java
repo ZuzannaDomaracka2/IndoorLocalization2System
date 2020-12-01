@@ -9,8 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     Button buttonCheckDbConnection;
     Button buttonCheckPermissions;
     Button buttonEnableBt;
-
+    Bitmap[] map = new Bitmap[1];
     DatabaseReference dataBuildings;
     DatabaseReference dataUsers;
     StorageReference storageReference;
@@ -92,10 +96,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "BLUETOOTH IS ENABLED!", Toast.LENGTH_SHORT).show();
                 buttonEnableBt.setText("BLUETOOTH IS ENABLED");
             }
-
-
         });
 
+        download_map("0");
         //read/write from/to database
         dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
         dataUsers = FirebaseDatabase.getInstance().getReference("Users");
@@ -241,77 +244,27 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public  void  download_map_0()
+    public void download_map(String floor)
     {
        storageReference=firebaseStorage.getInstance().getReference();
-       storeref=storageReference.child("Polanka_0p_10cm.bmp");
-       storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-           @Override
-           public void onSuccess(Uri uri) {
-               String url=uri.toString();
-               downloadFiles(MainActivity.this,"Polanka_Op_10cm",".bmp",DIRECTORY_DOWNLOADS,url);
+       StorageReference mapRef = storageReference.child("Polanka_"+ floor +"p_10cm.bmp");
 
-           }
-       }).addOnFailureListener(new OnFailureListener() {
-           @Override
-           public void onFailure(@NonNull Exception e) {
-
-           }
-       });
-
-
-    }
-    public  void  download_map_1()
-    {
-        storageReference=firebaseStorage.getInstance().getReference();
-        storeref=storageReference.child("Polanka_1p_10cm.bmp");
-        storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        final long TWO_MEGABYTES = 2 * 1024 * 1024;
+        mapRef.getBytes(TWO_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
-            public void onSuccess(Uri uri) {
-                String url=uri.toString();
-                downloadFiles(MainActivity.this,"Polanka_1p_10cm",".bmp",DIRECTORY_DOWNLOADS,url);
-
+            public void onSuccess(byte[] bytes) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inMutable = true;
+                map[0] = BitmapFactory.decodeByteArray(bytes, 0 , bytes.length, options);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-
+            public void onFailure(@NonNull Exception exception) {
+                int errorCode = ((StorageException) exception).getErrorCode();
+                String errorMessage = exception.getMessage();
+                Log.d("TAG", errorMessage + errorCode);
             }
         });
-
-
-    }
-    public  void  download_map_2()
-    {
-        storageReference=firebaseStorage.getInstance().getReference();
-        storeref=storageReference.child("Polanka_2p_10cm.bmp");
-        storeref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                String url=uri.toString();
-                downloadFiles(MainActivity.this,"Polanka_2p_10cm",".bmp",DIRECTORY_DOWNLOADS,url);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-
-
-    }
-
-    public void downloadFiles(Context context, String filename, String fileExtension,String destinationDirectory,String url)
-    {
-        DownloadManager downloadManager=(DownloadManager) activityContext.getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri= Uri.parse(url);
-        DownloadManager.Request request=new DownloadManager.Request(uri);
-
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalFilesDir(context,destinationDirectory,filename+fileExtension);
-        downloadManager.enqueue(request);
-
     }
 
     @Override
