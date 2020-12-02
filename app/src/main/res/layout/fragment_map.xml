@@ -6,13 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MapFragment">
 
-    <ImageView
-        android:id="@+id/mapView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Map View"
-        android:scaleX="3"
-        android:scaleY="3"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mapHolderFragment"
+        android:name="com.pracowniatmib.indoorlocalizationsystem.MapHolderFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,11 +21,55 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="Cursor Marker"
-        android:scaleX="0.3"
-        android:scaleY="0.3"
+        android:scaleX="0.4"
+        android:scaleY="0.4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cursor_marker" />
+
+    <EditText
+        android:id="@+id/inputXTextNumber"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:shadowColor="#000000"
+        android:shadowDx="1.5"
+        android:shadowDy="1.3"
+        android:shadowRadius="1.6"
+        android:backgroundTintMode="add"
+        android:backgroundTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/cursorMarker"
+        app:layout_constraintStart_toStartOf="@+id/cursorMarker"
+        android:autofillHints="X" />
+
+    <EditText
+        android:id="@+id/inputYTextNumber"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:shadowColor="#000000"
+        android:shadowDx="1.5"
+        android:shadowDy="1.3"
+        android:shadowRadius="1.6"
+        android:backgroundTintMode="add"
+        android:backgroundTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/cursorMarker"
+        app:layout_constraintEnd_toEndOf="@+id/cursorMarker"
+        android:autofillHints="Y" />
+
+    <Button
+        android:id="@+id/buttonGo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/go"
+        app:layout_constraintStart_toEndOf="@+id/inputYTextNumber"
+        app:layout_constraintTop_toTopOf="@+id/inputYTextNumber" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

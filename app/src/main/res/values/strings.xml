@@ -16,7 +16,13 @@
     <string name="update_map">UPDATE\nMAP</string>
     <string name="sensor_mode">SENSOR\nMODE</string>
     <string name="algorithm_mode">ALGORITHM\nMODE</string>
-    <string name="disabling_bluetooth">DISABLING BLUETOOTH...</string>
+    <string name="disabling_bluetooth">DISABLING BLUETOOTH…</string>
     <string name="bluetooth_is_enabled">BLUETOOTH IS ENABLED</string>
-    <string name="enabling_bluetooth">ENABLING BLUETOOTH...</string>
+    <string name="enabling_bluetooth">ENABLING BLUETOOTH…</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dead_reckoning">Dead reckoning</string>
+    <string name="trilateration">Trilateration</string>
+    <string name="fingerprinting">Fingerprinting</string>
+    <string name="go">GO</string>
 </resources>
