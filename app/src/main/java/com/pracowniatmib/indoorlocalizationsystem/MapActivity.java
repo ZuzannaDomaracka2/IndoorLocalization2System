@@ -55,7 +55,7 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         //initialize object lists
         wifiTransmitterList = new ArrayList<>();
         bleTransmitterList = new ArrayList<>();
-        user = new LinkedList<>();
+        user = new ArrayList<>();
 
         //fetch the algorithm option list from Application-scope variable
         ArrayList<AlgorithmOption> algorithmOptionList = myApplication.getAlgorithmOptionList();

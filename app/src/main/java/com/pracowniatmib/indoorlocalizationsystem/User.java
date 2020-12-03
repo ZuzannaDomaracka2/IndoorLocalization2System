@@ -68,6 +68,4 @@ public class User implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-
 }

@@ -1,5 +1,7 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
+import androidx.annotation.NonNull;
+
 class AlgorithmOption {
     private boolean enabled;
     private boolean available;
@@ -40,5 +42,10 @@ class AlgorithmOption {
     public int getIconResId()
     {
         return iconResId;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
