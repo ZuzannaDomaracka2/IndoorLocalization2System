@@ -55,17 +55,8 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         wifiTransmitterList = new ArrayList<>();
         bleTransmitterList = new ArrayList<>();
 
-        //dummy initiate algorithmOptions Map object - the target is to fetch it from Application-scope variable
-
+        //fetch the algorithm option list from Application-scope variable
         ArrayList<AlgorithmOption> algorithmOptionList = myApplication.getAlgorithmOptionList();
-        if(algorithmOptionList == null)
-        {
-            algorithmOptionList = new ArrayList<>();
-            algorithmOptionList.add(new AlgorithmOption(getString(R.string.dead_reckoning), R.drawable.dead_reckoning_icon));
-            algorithmOptionList.add(new AlgorithmOption(getString(R.string.trilateration), R.drawable.trilateration_icon));
-            algorithmOptionList.add(new AlgorithmOption(getString(R.string.fingerprinting), R.drawable.fingerprinting_icon));
-        }
-
         algorithmMenuAdapter = new AlgorithmMenuAdapter(activityContext, algorithmOptionList);
 
         //initialize utility objects

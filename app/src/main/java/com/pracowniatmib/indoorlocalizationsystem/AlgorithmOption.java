@@ -2,6 +2,7 @@ package com.pracowniatmib.indoorlocalizationsystem;
 
 class AlgorithmOption {
     private boolean enabled;
+    private boolean available;
     private String name;
     private int iconResId;
 
@@ -10,6 +11,7 @@ class AlgorithmOption {
         this.name = name;
         this.iconResId = iconResId;
         this.enabled = true;
+        this.available = true;
     }
 
     public void setEnabled(boolean value)
@@ -20,6 +22,14 @@ class AlgorithmOption {
     public boolean isEnabled()
     {
         return enabled;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public boolean isAvailable() {
+        return available;
     }
 
     public String getName()

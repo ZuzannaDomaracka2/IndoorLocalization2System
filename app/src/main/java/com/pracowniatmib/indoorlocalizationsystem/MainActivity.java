@@ -8,8 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Context activityContext = this;
 
     Button buttonStart;
-    Button buttonCheckDbConnection;
+    Button buttonCheckSensors;
     Button buttonCheckPermissions;
     Button buttonEnableBt;
 
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         //get handles to UI objects
         buttonStart = findViewById(R.id.buttonStartMenu);
-        buttonCheckDbConnection = findViewById(R.id.buttonCheckDbConnMenu);
+        buttonCheckSensors = findViewById(R.id.buttonCheckSensors);
         buttonCheckPermissions = findViewById(R.id.buttonCheckPermissionsMenu);
         buttonEnableBt = findViewById(R.id.buttonEnableBtMenu);
 
@@ -61,10 +62,21 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(bluetoothStateListener, filter);
 
+        //setup the algorithm options
+        ArrayList<AlgorithmOption> algorithmOptionList = myApplication.getAlgorithmOptionList();
+        if(algorithmOptionList == null)
+        {
+            algorithmOptionList = new ArrayList<>();
+            algorithmOptionList.add(new AlgorithmOption(getString(R.string.dead_reckoning), R.drawable.dead_reckoning_icon));
+            algorithmOptionList.add(new AlgorithmOption(getString(R.string.trilateration), R.drawable.trilateration_icon));
+            algorithmOptionList.add(new AlgorithmOption(getString(R.string.fingerprinting), R.drawable.fingerprinting_icon));
+        }
+        myApplication.setAlgorithmOptionList(algorithmOptionList);
+
         //set OnClickListeners to buttons
         buttonStart.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), MapActivity.class)));
 
-        buttonCheckDbConnection.setOnClickListener(view -> Toast.makeText(MainActivity.this, "CHECK DB CONNECTION BUTTON CLICKED!", Toast.LENGTH_SHORT).show());
+        buttonCheckSensors.setOnClickListener(view -> myApplication.setDeadReckoningAvailable(false) );
 
         buttonCheckPermissions.setOnClickListener(view -> checkPermissions(activityContext));
 
@@ -84,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         //read/write from/to database
         dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
         dataUsers = FirebaseDatabase.getInstance().getReference("Users");
-        addBuildings();
+        //addBuildings();
         userId = dataUsers.push().getKey();
         dataUsers.child(userId).child("userId").setValue(userId);
         dataUsers.child(userId).child("building_floor").setValue("1");
@@ -199,6 +211,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public boolean checkSensorsArePresent(Context context) {
+        SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        boolean gyroscope = manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null;
+        boolean accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null;
+        boolean magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null;
+        if(gyroscope && accelerometer && magnetometer) {
+            Toast.makeText(context, "Sensors required for Dead Reckoning are supported", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else {
+            Toast.makeText(context, "Can't use Dead Reckoning algorithm", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
     final BroadcastReceiver bluetoothStateListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -239,7 +266,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         //unregister Bluetooth state listener
         unregisterReceiver(bluetoothStateListener);
-
         super.onDestroy();
     }
 }

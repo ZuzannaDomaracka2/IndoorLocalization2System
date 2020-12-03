@@ -37,6 +37,7 @@ public class AlgorithmMenuAdapter extends ArrayAdapter<AlgorithmOption> {
                 setFlag(true);
             });
             holder.setCheckBoxChecked(algorithmOptionList.get(position).isEnabled());
+            holder.setItemAvailable(getItem(position).isAvailable());
             convertView.setTag(holder);
         }
         return  convertView;

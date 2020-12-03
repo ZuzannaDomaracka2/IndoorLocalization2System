@@ -1,5 +1,6 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -40,6 +41,12 @@ public class AlgorithmMenuItemViewHolder {
 
     public void setCheckBoxOnCheckedListener(CompoundButton.OnCheckedChangeListener listener) {
         this.itemCheckBox.setOnCheckedChangeListener(listener);
+    }
+
+    public void setItemAvailable(boolean available)
+    {
+        this.itemCheckBox.setEnabled(available);
+        if(!available) this.itemImageView.setColorFilter(Color.argb(200, 100, 100, 100));
     }
 
     public boolean isCheckBoxChecked() {
