@@ -2,15 +2,21 @@ package com.pracowniatmib.indoorlocalizationsystem;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -18,13 +24,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 1;
@@ -41,9 +54,12 @@ public class MainActivity extends AppCompatActivity {
     Button buttonCheckSensors;
     Button buttonCheckPermissions;
     Button buttonEnableBt;
-
+    Bitmap[] map = new Bitmap[1];
     DatabaseReference dataBuildings;
     DatabaseReference dataUsers;
+    StorageReference storageReference;
+    StorageReference storeref;
+    FirebaseStorage firebaseStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +109,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        download_map("0");
         //read/write from/to database
         dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
         dataUsers = FirebaseDatabase.getInstance().getReference("Users");
-        //addBuildings();
+        addBuildings();
         userId = dataUsers.push().getKey();
         dataUsers.child(userId).child("userId").setValue(userId);
         dataUsers.child(userId).child("building_floor").setValue("1");
@@ -252,6 +269,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public void download_map(String floor)
+    {
+       storageReference=firebaseStorage.getInstance().getReference();
+       StorageReference mapRef = storageReference.child("Polanka_"+ floor +"p_10cm.bmp");
+
+        final long TWO_MEGABYTES = 2 * 1024 * 1024;
+        mapRef.getBytes(TWO_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inMutable = true;
+                map[0] = BitmapFactory.decodeByteArray(bytes, 0 , bytes.length, options);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                int errorCode = ((StorageException) exception).getErrorCode();
+                String errorMessage = exception.getMessage();
+                Log.d("TAG", errorMessage + errorCode);
+            }
+        });
+    }
 
     @Override
     protected void onStop() {
