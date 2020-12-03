@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -45,7 +44,7 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
 
     String userId;
     Bitmap currentMapBitmap;
-    boolean newMapReady;
+    final Bitmap[] mapBitmap = new Bitmap[1];
     DatabaseReference dataBuildings;
     DatabaseReference dataUsers;
     StorageReference storageReference;
@@ -132,7 +131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
 
 
         //read/write from/to database
-        currentMapBitmap = downloadMap("WiIT_Polanka", "0");
+        //currentMapBitmap = downloadMap("wiit_polanka", "0");
         dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
         dataUsers = FirebaseDatabase.getInstance().getReference("Users");
         userId = dataUsers.push().getKey();
@@ -177,13 +176,15 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         mapFragmentContainerView.setVisibility(View.INVISIBLE);
         mapViewProgressBar.setVisibility(View.VISIBLE);
 
-        currentMapBitmap = downloadMap(mapName, floorNo);
+        downloadMap(mapName, floorNo);
+        /*
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if(newMapReady)
                 {
+                    currentMapBitmap = mapBitmap[0].copy(mapBitmap[0].getConfig(), false);
                     mapFragment.setMap(currentMapBitmap);
                     mapFragmentContainerView.setVisibility(View.VISIBLE);
                     mapViewProgressBar.setVisibility(View.GONE);
@@ -191,7 +192,17 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
             }
         };
 
-        handler.postDelayed(runnable, 1000);
+        handler.postDelayed(runnable, 5000);
+
+         */
+    }
+
+    private void showNewMap()
+    {
+        //currentMapBitmap = mapBitmap[0].copy(mapBitmap[0].getConfig(), false);
+        mapFragment.setMap(mapBitmap[0]);
+        mapFragmentContainerView.setVisibility(View.VISIBLE);
+        mapViewProgressBar.setVisibility(View.GONE);
     }
 
     void showAlgorithmMenuAlert(AlgorithmMenuAdapter algorithmMenuAdapter)
@@ -229,27 +240,22 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         FirebaseDatabase.getInstance().getReference().child("Users").child(userId).updateChildren(buildingHashMap);
     }
 
-    public Bitmap downloadMap(String mapName, String floor)
+    public void downloadMap(String mapName, String floor)
     {
-        newMapReady = false;
         storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference mapRef = storageReference.child(mapName + "_" + floor +".bmp");
-
-        final Bitmap[] mapBitmap = new Bitmap[1];
 
         final long TWO_MEGABYTES = 2 * 1024 * 1024;
         mapRef.getBytes(TWO_MEGABYTES).addOnSuccessListener(bytes -> {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inMutable = true;
             mapBitmap[0] = BitmapFactory.decodeByteArray(bytes, 0 , bytes.length, options);
-            newMapReady = true;
+            showNewMap();
         }).addOnFailureListener(exception -> {
             int errorCode = ((StorageException) exception).getErrorCode();
             String errorMessage = exception.getMessage();
             Log.d("TAG", errorMessage + errorCode);
         });
-
-        return mapBitmap[0];
     }
 
     @Override

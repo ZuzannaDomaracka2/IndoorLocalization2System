@@ -51,8 +51,17 @@ public class MapHolderFragment extends Fragment {
         int[] currentMapImageActualDimensions = getCurrentMapImageActualDimensions();
         float actualMapImageWidth = currentMapImageActualDimensions[0];
         float actualMapImageHeight = currentMapImageActualDimensions[1];
-        float scaledMapImageWidth = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicWidth();
-        float scaledMapImageHeight = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicHeight();
+        float scaledMapImageWidth, scaledMapImageHeight;
+        if (currentMapImageResId != 0)
+        {
+            scaledMapImageWidth = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicWidth();
+            scaledMapImageHeight = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicHeight();
+        }
+        else
+        {
+            scaledMapImageWidth = currentMapBitmap.getWidth();
+            scaledMapImageHeight = currentMapBitmap.getHeight();
+        }
         float mapScale = mapView.getScaleX();
         debugTextView.setText("mapViewWidth = " + mapViewWidth + "\n" +
                             "mapViewHeight = " + mapViewHeight + "\n" +
