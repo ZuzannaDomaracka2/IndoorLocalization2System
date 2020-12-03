@@ -27,7 +27,7 @@ public class BeaconManager {
     private ScanCallback callback;
     private final Context context;
     private String uuidStr = "";
-    private int manufacturerId = -1;
+    private int manufacturerId;
 
     private List<Integer> majorList = new ArrayList<>();
     private List<Integer> minorList = new ArrayList<>();

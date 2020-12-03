@@ -21,6 +21,7 @@ import java.util.Objects;
 public class MapActivity extends AppCompatActivity implements OnMapPositionChangeListener {
 
     Context activityContext = this;
+    MyApplication myApplication;
 
     private List<Transmitter> wifiTransmitterList;
     private List<Transmitter> bleTransmitterList;
@@ -33,11 +34,12 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     Button buttonSettings;
     Button buttonUpdateMap;
     Button buttonAlgorithmMode;
-    Button buttonTestMap;
     Button buttonUp;
     Button buttonRight;
     Button buttonLeft;
     Button buttonDown;
+
+    AlgorithmMenuAdapter algorithmMenuAdapter;
 
     private ScaleGestureDetector scaleGestureDetector;
     private float scaleFactor = 1.0f;
@@ -47,17 +49,24 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        myApplication = (MyApplication) getApplication();
 
         //initialize object lists
         wifiTransmitterList = new ArrayList<>();
         bleTransmitterList = new ArrayList<>();
 
         //dummy initiate algorithmOptions Map object - the target is to fetch it from Application-scope variable
-        ArrayList<AlgorithmOption> algorithmOptionsArrayList = new ArrayList<>();
-        algorithmOptionsArrayList.add(new AlgorithmOption(getString(R.string.dead_reckoning), R.drawable.dead_reckoning_icon));
-        algorithmOptionsArrayList.add(new AlgorithmOption(getString(R.string.trilateration), R.drawable.trilateration_icon));
-        algorithmOptionsArrayList.add(new AlgorithmOption(getString(R.string.fingerprinting), R.drawable.fingerprinting_icon));
-        final AlgorithmMenuAdapter algorithmMenuAdapter = new AlgorithmMenuAdapter(activityContext, algorithmOptionsArrayList);
+
+        ArrayList<AlgorithmOption> algorithmOptionList = myApplication.getAlgorithmOptionList();
+        if(algorithmOptionList == null)
+        {
+            algorithmOptionList = new ArrayList<>();
+            algorithmOptionList.add(new AlgorithmOption(getString(R.string.dead_reckoning), R.drawable.dead_reckoning_icon));
+            algorithmOptionList.add(new AlgorithmOption(getString(R.string.trilateration), R.drawable.trilateration_icon));
+            algorithmOptionList.add(new AlgorithmOption(getString(R.string.fingerprinting), R.drawable.fingerprinting_icon));
+        }
+
+        algorithmMenuAdapter = new AlgorithmMenuAdapter(activityContext, algorithmOptionList);
 
         //initialize utility objects
         fragmentManager = getSupportFragmentManager();
@@ -69,19 +78,12 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         buttonSettings = findViewById(R.id.buttonSettingsMap);
         buttonUpdateMap = findViewById(R.id.buttonUpdateMap);
         buttonAlgorithmMode = findViewById(R.id.buttonAlgorithmModeMap);
-        buttonTestMap = findViewById(R.id.buttonTestMap);
         buttonUp = findViewById(R.id.buttonUp);
         buttonRight = findViewById(R.id.buttonRight);
         buttonLeft = findViewById(R.id.buttonLeft);
         buttonDown = findViewById(R.id.buttonDown);
 
         //set button OnClickListeners
-        buttonTestMap.setOnClickListener(v -> {
-            System.out.println("X: " + mapFragment.getMapX() + ", Y: " + mapFragment.getMapY());
-            mapFragment.moveMap(0,10);
-            mapFragment.rotateCursor(30);
-        });
-
         buttonSettings.setOnClickListener(view -> Toast.makeText(MapActivity.this, "SETTINGS BUTTON CLICKED!", Toast.LENGTH_SHORT).show());
 
         buttonUpdateMap.setOnClickListener(view -> Toast.makeText(MapActivity.this, "UPDATE MAP BUTTON CLICKED!", Toast.LENGTH_SHORT).show());
@@ -177,5 +179,11 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     public void deleteBleTransmitter()
     {
         bleTransmitterList.clear();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        myApplication.setAlgorithmOptionList((ArrayList<AlgorithmOption>) algorithmMenuAdapter.getAlgorithmOptionList());
     }
 }

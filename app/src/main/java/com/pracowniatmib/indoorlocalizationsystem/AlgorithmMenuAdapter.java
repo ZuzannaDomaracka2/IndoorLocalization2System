@@ -28,32 +28,17 @@ public class AlgorithmMenuAdapter extends ArrayAdapter<AlgorithmOption> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.algorithm_menu_item, parent, false);
             holder.setItemImageView(convertView.findViewById(R.id.itemImage));
-            switch (currentItem) {
-                case "Dead reckoning":
-                    holder.setItemImage(R.drawable.dead_reckoning_icon);
-                    break;
-                case "Trilateration":
-                    holder.setItemImage(R.drawable.trilateration_icon);
-                    break;
-                case "Fingerprinting":
-                    holder.setItemImage(R.drawable.fingerprinting_icon);
-                    break;
-                default:
-                    break;
-            }
+            holder.setItemImage(getItem(position).getIconResId());
             holder.setItemTextView(convertView.findViewById(R.id.itemText));
             holder.setItemText(currentItem);
             holder.setItemCheckBox(convertView.findViewById(R.id.itemCheckBox));
-            holder.setCheckBoxOnCheckedListener(null);
-            holder.setCheckBoxChecked(algorithmOptionList.get(position).isEnabled());
             holder.setCheckBoxOnCheckedListener((buttonView, isChecked) -> {
-                holder.setCheckBoxChecked(isChecked);
-                setAlgorithm(position, holder.isCheckBoxChecked());
+                setAlgorithm(position, isChecked);
                 setFlag(true);
             });
+            holder.setCheckBoxChecked(algorithmOptionList.get(position).isEnabled());
             convertView.setTag(holder);
         }
-
         return  convertView;
     }
 

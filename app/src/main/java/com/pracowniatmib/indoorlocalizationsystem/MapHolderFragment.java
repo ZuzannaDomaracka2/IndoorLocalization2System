@@ -27,14 +27,6 @@ public class MapHolderFragment extends Fragment {
 
     private int currentMapImageResId;
 
-    private float mapScale;
-    private float mapViewWidth;
-    private float mapViewHeight;
-    private float actualMapImageWidth;
-    private float actualMapImageHeight;
-    private float scaledMapImageWidth;
-    private float scaledMapImageHeight;
-
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
@@ -50,23 +42,28 @@ public class MapHolderFragment extends Fragment {
     }
 
     private void updateScale() {
-        mapViewWidth = mapView.getWidth();
-        mapViewHeight = mapView.getHeight();
+        float mapViewWidth = mapView.getWidth();
+        float mapViewHeight = mapView.getHeight();
+        float measuredMapViewWidth = mapView.getMeasuredWidth();
+        float measuredMapViewHeight = mapView.getMeasuredHeight();
         int[] currentMapImageActualDimensions = getCurrentMapImageActualDimensions();
-        actualMapImageWidth = currentMapImageActualDimensions[0];
-        actualMapImageHeight = currentMapImageActualDimensions[1];
-        scaledMapImageWidth = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicWidth();
-        scaledMapImageHeight = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicHeight();
-        mapScale = mapView.getScaleX();
+        float actualMapImageWidth = currentMapImageActualDimensions[0];
+        float actualMapImageHeight = currentMapImageActualDimensions[1];
+        float scaledMapImageWidth = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicWidth();
+        float scaledMapImageHeight = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicHeight();
+        float mapScale = mapView.getScaleX();
         debugTextView.setText("mapViewWidth = " + mapViewWidth + "\n" +
                             "mapViewHeight = " + mapViewHeight + "\n" +
+                            "measuredMapViewWidth = " + measuredMapViewWidth + "\n" +
+                            "measuredMapViewHeight = " + measuredMapViewHeight + "\n" +
                             "actualMapImageWidth = " + actualMapImageWidth + "\n" +
                             "actualMapImageHeight = " + actualMapImageHeight + "\n" +
                             "scaledMapImageWidth = " + scaledMapImageWidth + "\n" +
                             "scaledMapImageHeight = " + scaledMapImageHeight + "\n" +
                             "mapScale = " + mapScale + "\n" +
                             "finalMapImageWidth = " + mapScale * scaledMapImageWidth + "\n" +
-                            "finalMapImageHeight = " + mapScale * scaledMapImageHeight + "\n");
+                            "finalMapImageHeight = " + mapScale * scaledMapImageHeight + "\n" +
+                            "mapView's imageMatrix: " + mapView.getImageMatrix().toString());
     }
 
     private ArrayList<View> getAllViews(ConstraintLayout constraintLayout) {

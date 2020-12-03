@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_LOCATION = 2;
     final int REQUEST_BLUETOOTH = 3;
     final int REQUEST_WIFI = 4;
-    MyApplication myApplication = null;
+    MyApplication myApplication;
 
     String userId;
 
