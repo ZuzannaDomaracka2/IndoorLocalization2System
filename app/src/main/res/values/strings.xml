@@ -25,4 +25,6 @@
     <string name="trilateration">Trilateration</string>
     <string name="fingerprinting">Fingerprinting</string>
     <string name="go">GO</string>
+    <string name="map_name">Map name</string>
+    <string name="floor_number">Floor number</string>
 </resources>

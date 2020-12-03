@@ -26,6 +26,7 @@ public class MapHolderFragment extends Fragment {
     private TextView debugTextView;
 
     private int currentMapImageResId;
+    private Bitmap currentMapBitmap;
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
@@ -80,6 +81,15 @@ public class MapHolderFragment extends Fragment {
     {
         mapView.setImageResource(resourceId);
         currentMapImageResId = resourceId;
+        currentMapBitmap = null;
+        updateScale();
+    }
+
+    public void setMap(Bitmap mapBitmap)
+    {
+        mapView.setImageBitmap(mapBitmap);
+        currentMapBitmap = mapBitmap;
+        currentMapImageResId = 0;
         updateScale();
     }
 
@@ -87,9 +97,18 @@ public class MapHolderFragment extends Fragment {
     {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), currentMapImageResId, o);
-        int width = o.outWidth;
-        int height = o.outHeight;
+        int width, height;
+        if(currentMapImageResId != 0)
+        {
+            Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), currentMapImageResId, o);
+            width = o.outWidth;
+            height = o.outHeight;
+        }
+        else
+        {
+            width = currentMapBitmap.getWidth();
+            height = currentMapBitmap.getHeight();
+        }
         return new int[]{width, height};
     }
 

@@ -57,6 +57,11 @@ public class MapFragment extends Fragment {
         mapHolderFragment.setMap(resourceId);
     }
 
+    public void setMap(Bitmap mapBitmap)
+    {
+        mapHolderFragment.setMap(mapBitmap);
+    }
+
     public void moveMap(float x, float y) {
         mapHolderFragment.moveMap(x, y);
         onMapPositionChangeListener.onMapPositionChange(mapHolderFragment.getMapX(), mapHolderFragment.getMapY());

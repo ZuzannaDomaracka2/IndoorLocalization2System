@@ -2,21 +2,15 @@ package com.pracowniatmib.indoorlocalizationsystem;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -24,42 +18,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-
-import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 1;
     final int REQUEST_LOCATION = 2;
     final int REQUEST_BLUETOOTH = 3;
     final int REQUEST_WIFI = 4;
+
     MyApplication myApplication;
-
-    String userId;
-
     Context activityContext = this;
 
     Button buttonStart;
     Button buttonCheckSensors;
     Button buttonCheckPermissions;
     Button buttonEnableBt;
-    Bitmap[] map = new Bitmap[1];
-    DatabaseReference dataBuildings;
-    DatabaseReference dataUsers;
-    StorageReference storageReference;
-    StorageReference storeref;
-    FirebaseStorage firebaseStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         //set OnClickListeners to buttons
         buttonStart.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), MapActivity.class)));
 
-        buttonCheckSensors.setOnClickListener(view -> myApplication.setDeadReckoningAvailable(false) );
+        buttonCheckSensors.setOnClickListener(view -> myApplication.setDeadReckoningAvailable(checkSensorsArePresent(activityContext)) );
 
         buttonCheckPermissions.setOnClickListener(view -> checkPermissions(activityContext));
 
@@ -108,85 +82,6 @@ public class MainActivity extends AppCompatActivity {
                 buttonEnableBt.setText("BLUETOOTH IS ENABLED");
             }
         });
-
-        download_map("0");
-        //read/write from/to database
-        dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
-        dataUsers = FirebaseDatabase.getInstance().getReference("Users");
-        addBuildings();
-        userId = dataUsers.push().getKey();
-        dataUsers.child(userId).child("userId").setValue(userId);
-        dataUsers.child(userId).child("building_floor").setValue("1");
-        dataUsers.child(userId).child("building_id").setValue("123");
-        dataUsers.child(userId).child("coordinates").child("x").setValue("0");
-        dataUsers.child(userId).child("coordinates").child("y").setValue("0");
-    }
-
-    public void addBuildings(){
-        //Building 1
-        String id1=dataBuildings.push().getKey();
-        dataBuildings.child(id1).child("map_name").setValue("map_1");
-        dataBuildings.child(id1).child("name").setValue("building1");
-
-        //BLE Transmitter 1
-        dataBuildings.child(id1).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 1").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 1").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 1").child("power").setValue("1");
-
-
-        //BLE Transmitter 2
-        dataBuildings.child(id1).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 2").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 2").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 2").child("power").setValue("1");
-
-        //Wifi Transmitter 1
-        dataBuildings.child(id1).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 1").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 1").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 1").child("power").setValue("1");
-
-        //Wifi Transmitter 2
-        dataBuildings.child(id1).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id1).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("power").setValue("1");
-
-        //Building 2
-        String id2=dataBuildings.push().getKey();
-
-        dataBuildings.child(id2).child("map_name").setValue("map_2");
-        dataBuildings.child(id2).child("name").setValue("building2");
-
-        //BLE Transmitter 1
-        dataBuildings.child(id2).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 1").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 1").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 1").child("power").setValue("1");
-
-        //BLE Transmitter 2
-        dataBuildings.child(id2).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 2").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 2").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("BLE Transmitters").child("BLE Transmitter 2").child("power").setValue("1");
-
-        //Wifi Transmitter 1
-        dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 1").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 1").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 1").child("power").setValue("1");
-
-        //Wifi transmitter 2
-        dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("coordinates").child("x").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("coordinates").child("y").setValue("1");
-        dataBuildings.child(id2).child("floors").child("0").child("WiFi Transmitters").child("WiFi Transmitter 2").child("power").setValue("1");
-    }
-
-    public void updateUserDatabase(String buildingId, String buildingFloor, float x, float y) {
-        Map<String, Object> coordinateHashMap = new HashMap<>();
-        coordinateHashMap.put("x", String.valueOf(x));
-        coordinateHashMap.put("y", String.valueOf(y));
-
-        Map<String, Object> buildingHashMap = new HashMap<>();
-        buildingHashMap.put("building_floor", buildingFloor);
-        buildingHashMap.put("building_id", buildingId);
-
-        FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("coordinates").updateChildren(coordinateHashMap);
-        FirebaseDatabase.getInstance().getReference().child("Users").child(userId).updateChildren(buildingHashMap);
     }
 
     public void checkPermissions(Context context) {
@@ -270,35 +165,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void download_map(String floor)
-    {
-       storageReference=firebaseStorage.getInstance().getReference();
-       StorageReference mapRef = storageReference.child("Polanka_"+ floor +"p_10cm.bmp");
-
-        final long TWO_MEGABYTES = 2 * 1024 * 1024;
-        mapRef.getBytes(TWO_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inMutable = true;
-                map[0] = BitmapFactory.decodeByteArray(bytes, 0 , bytes.length, options);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                int errorCode = ((StorageException) exception).getErrorCode();
-                String errorMessage = exception.getMessage();
-                Log.d("TAG", errorMessage + errorCode);
-            }
-        });
-    }
-
     @Override
     protected void onStop() {
-        //delete user database record
-        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
-        userReference.removeValue();
-
         super.onStop();
     }
 
