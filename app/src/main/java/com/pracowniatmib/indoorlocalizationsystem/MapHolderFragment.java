@@ -3,8 +3,11 @@ package com.pracowniatmib.indoorlocalizationsystem;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,13 @@ public class MapHolderFragment extends Fragment {
     private ArrayList<View> viewList;
     private TextView debugTextView;
 
+    int[] currentMapImageActualDimensions;
+    float actualMapImageWidth, actualMapImageHeight;
+    float scaledMapImageWidth, scaledMapImageHeight;
+    float mapScale;
+    float[] imageMatrix = new float[9];
+    float beginCoordX, beginCoordY;
+
     private int currentMapImageResId;
     private Bitmap currentMapBitmap;
 
@@ -39,7 +49,6 @@ public class MapHolderFragment extends Fragment {
 
         //TODO: when creating a new ImageView on the map, we need to add it to the viewList
         //TODO: when deleting an ImageView from the map, we need to remove it from the viewList
-
         viewList = getAllViews(constraintLayout);
     }
 
@@ -48,10 +57,11 @@ public class MapHolderFragment extends Fragment {
         float mapViewHeight = mapView.getHeight();
         float measuredMapViewWidth = mapView.getMeasuredWidth();
         float measuredMapViewHeight = mapView.getMeasuredHeight();
-        int[] currentMapImageActualDimensions = getCurrentMapImageActualDimensions();
-        float actualMapImageWidth = currentMapImageActualDimensions[0];
-        float actualMapImageHeight = currentMapImageActualDimensions[1];
-        float scaledMapImageWidth, scaledMapImageHeight;
+        currentMapImageActualDimensions = getCurrentMapImageActualDimensions();
+        actualMapImageWidth = currentMapImageActualDimensions[0];
+        actualMapImageHeight = currentMapImageActualDimensions[1];
+        mapScale = mapView.getScaleX();
+        if (mapView.getImageMatrix() != null) mapView.getImageMatrix().getValues(imageMatrix);
         if (currentMapImageResId != 0)
         {
             scaledMapImageWidth = ResourcesCompat.getDrawable(getResources(), currentMapImageResId, null).getIntrinsicWidth();
@@ -59,10 +69,11 @@ public class MapHolderFragment extends Fragment {
         }
         else
         {
-            scaledMapImageWidth = currentMapBitmap.getWidth();
-            scaledMapImageHeight = currentMapBitmap.getHeight();
+            scaledMapImageWidth = Math.round(currentMapBitmap.getWidth() * getResources().getDisplayMetrics().density);
+            scaledMapImageHeight = Math.round(currentMapBitmap.getHeight() * getResources().getDisplayMetrics().density);
         }
-        float mapScale = mapView.getScaleX();
+        beginCoordX = (actualMapImageWidth * imageMatrix[Matrix.MSCALE_X] * mapScale)/2;
+        beginCoordY = (actualMapImageHeight * imageMatrix[Matrix.MSCALE_Y] * mapScale)/2;
         debugTextView.setText("mapViewWidth = " + mapViewWidth + "\n" +
                             "mapViewHeight = " + mapViewHeight + "\n" +
                             "measuredMapViewWidth = " + measuredMapViewWidth + "\n" +
@@ -72,9 +83,11 @@ public class MapHolderFragment extends Fragment {
                             "scaledMapImageWidth = " + scaledMapImageWidth + "\n" +
                             "scaledMapImageHeight = " + scaledMapImageHeight + "\n" +
                             "mapScale = " + mapScale + "\n" +
-                            "finalMapImageWidth = " + mapScale * scaledMapImageWidth + "\n" +
-                            "finalMapImageHeight = " + mapScale * scaledMapImageHeight + "\n" +
-                            "mapView's imageMatrix: " + mapView.getImageMatrix().toString());
+                            "MSCALE_X = " + imageMatrix[Matrix.MSCALE_X] + "\n" +
+                            "MSCALE_Y = " + imageMatrix[Matrix.MSCALE_Y] + "\n" +
+                            "beginCoordX = " + beginCoordX + "\n" +
+                            "beginCoordY = " + beginCoordY + "\n" +
+                            "imageMatrix: " + mapView.getImageMatrix().toString());
     }
 
     private ArrayList<View> getAllViews(ConstraintLayout constraintLayout) {
@@ -121,6 +134,22 @@ public class MapHolderFragment extends Fragment {
         return new int[]{width, height};
     }
 
+    private float[] translateCoordinates(float xImage, float yImage)
+    {
+        float[] ui_coordinates = new float[2];
+        ui_coordinates[0] = beginCoordX + xImage * mapScale * imageMatrix[Matrix.MSCALE_X];
+        ui_coordinates[1] = beginCoordY + yImage * mapScale * imageMatrix[Matrix.MSCALE_Y];
+        return ui_coordinates;
+    }
+
+    private float[] reverseTranslateCoordinates(float xUi, float yUi)
+    {
+        float[] image_coordinates = new float[2];
+        image_coordinates[0] =  (beginCoordX - xUi) / (mapScale * imageMatrix[Matrix.MSCALE_X]);
+        image_coordinates[1] =  (beginCoordY - yUi) / (mapScale * imageMatrix[Matrix.MSCALE_Y]);
+        return image_coordinates;
+    }
+
     public void moveMap(float x, float y) {
         for(View view : viewList)
         {
@@ -134,7 +163,6 @@ public class MapHolderFragment extends Fragment {
         path.moveTo(view.getX() + x, view.getY() + y);
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path);
         animator.start();
-        updateScale();
     }
 
     public void setViewPosition(View view, float x, float y)
@@ -143,7 +171,6 @@ public class MapHolderFragment extends Fragment {
         path.moveTo(x, y);
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path);
         animator.start();
-        updateScale();
     }
 
     public void setMapPosition(float x, float y)
@@ -154,14 +181,24 @@ public class MapHolderFragment extends Fragment {
         }
     }
 
-    public float getMapX()
+    public float getUiMapX()
     {
         return mapView.getX();
     }
 
-    public float getMapY()
+    public float getUiMapY()
     {
         return mapView.getY();
+    }
+
+    public float getImageMapX()
+    {
+        return Math.round(reverseTranslateCoordinates(mapView.getX(), mapView.getY())[0]);
+    }
+
+    public float getImageMapY()
+    {
+        return Math.round(reverseTranslateCoordinates(mapView.getX(), mapView.getY())[1]);
     }
 
     @Override

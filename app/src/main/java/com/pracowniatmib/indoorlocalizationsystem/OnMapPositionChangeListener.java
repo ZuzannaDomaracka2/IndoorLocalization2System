@@ -1,5 +1,6 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
 interface OnMapPositionChangeListener {
-    void onMapPositionChange(float x, float y);
+    void onUiMapPositionChange(float x, float y);
+    void onImageMapPositionChange(float x, float y);
 }

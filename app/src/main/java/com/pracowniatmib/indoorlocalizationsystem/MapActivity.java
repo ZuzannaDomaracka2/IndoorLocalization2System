@@ -1,7 +1,6 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -43,7 +42,6 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     private List<User> userList;
 
     String userId;
-    Bitmap currentMapBitmap;
     final Bitmap[] mapBitmap = new Bitmap[1];
     DatabaseReference dataBuildings;
     DatabaseReference dataUsers;
@@ -54,7 +52,8 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     FragmentContainerView mapFragmentContainerView;
     ProgressBar mapViewProgressBar;
 
-    TextView mapPositionTextView;
+    TextView mapUiPositionTextView;
+    TextView mapImagePositionTextView;
     TextView debugTextView;
     Button buttonSettings;
     Button buttonUpdateMap;
@@ -92,7 +91,8 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         //get handles to UI objects
         mapFragmentContainerView = findViewById(R.id.mapViewFragment);
         mapViewProgressBar = findViewById(R.id.mapViewProgressBar);
-        mapPositionTextView = findViewById(R.id.mapPositionTextView);
+        mapUiPositionTextView = findViewById(R.id.mapUiPositionTextView);
+        mapImagePositionTextView = findViewById(R.id.mapImagePositionTextView);
         debugTextView = findViewById(R.id.textDebugMap);
         buttonSettings = findViewById(R.id.buttonSettingsMap);
         buttonUpdateMap = findViewById(R.id.buttonUpdateMap);
@@ -131,7 +131,6 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
 
 
         //read/write from/to database
-        //currentMapBitmap = downloadMap("wiit_polanka", "0");
         dataBuildings = FirebaseDatabase.getInstance().getReference("Buildings");
         dataUsers = FirebaseDatabase.getInstance().getReference("Users");
         userId = dataUsers.push().getKey();
@@ -147,27 +146,19 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         final EditText floorNoEditText = inflatedView.findViewById(R.id.floorNoTextView);
         builder.setView(inflatedView);
 
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(mapNameEditText.getText().toString().trim().isEmpty() || floorNoEditText.getText().toString().trim().isEmpty())
-                {
-                    Toast.makeText(activityContext, "Fill in the map name and floor number!", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    updateMap(mapNameEditText.getText().toString().trim(), floorNoEditText.getText().toString().trim());
-                    dialogInterface.dismiss();
-                }
+        builder.setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+            if(mapNameEditText.getText().toString().trim().isEmpty() || floorNoEditText.getText().toString().trim().isEmpty())
+            {
+                Toast.makeText(activityContext, "Fill in the map name and floor number!", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                updateMap(mapNameEditText.getText().toString().trim(), floorNoEditText.getText().toString().trim());
+                dialogInterface.dismiss();
             }
         });
 
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel());
 
         builder.show();
     }
@@ -175,31 +166,11 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     private void updateMap(String mapName, String floorNo) {
         mapFragmentContainerView.setVisibility(View.INVISIBLE);
         mapViewProgressBar.setVisibility(View.VISIBLE);
-
         downloadMap(mapName, floorNo);
-        /*
-        Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if(newMapReady)
-                {
-                    currentMapBitmap = mapBitmap[0].copy(mapBitmap[0].getConfig(), false);
-                    mapFragment.setMap(currentMapBitmap);
-                    mapFragmentContainerView.setVisibility(View.VISIBLE);
-                    mapViewProgressBar.setVisibility(View.GONE);
-                }
-            }
-        };
-
-        handler.postDelayed(runnable, 5000);
-
-         */
     }
 
     private void showNewMap()
     {
-        //currentMapBitmap = mapBitmap[0].copy(mapBitmap[0].getConfig(), false);
         mapFragment.setMap(mapBitmap[0]);
         mapFragmentContainerView.setVisibility(View.VISIBLE);
         mapViewProgressBar.setVisibility(View.GONE);
@@ -240,10 +211,10 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         FirebaseDatabase.getInstance().getReference().child("Users").child(userId).updateChildren(buildingHashMap);
     }
 
-    public void downloadMap(String mapName, String floor)
+    public void downloadMap(String mapName, String floorNo)
     {
         storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference mapRef = storageReference.child(mapName + "_" + floor +".bmp");
+        StorageReference mapRef = storageReference.child(mapName + "_" + floorNo +".bmp");
 
         final long TWO_MEGABYTES = 2 * 1024 * 1024;
         mapRef.getBytes(TWO_MEGABYTES).addOnSuccessListener(bytes -> {
@@ -263,8 +234,6 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         super.onResumeFragments();
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.mapViewFragment);
         mapFragment.setOnMapPositionChangeListener(this);
-        mapFragment.setMap(R.raw.polanka_0p_10cm);
-        //mapFragment.moveMap(1300, -750);
     }
 
     @Override
@@ -274,8 +243,13 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
     }
 
     @Override
-    public void onMapPositionChange(float x, float y) {
-        mapPositionTextView.setText("MAP POSITION\n" + "x: " + x + "\n" + "y: " + y);
+    public void onUiMapPositionChange(float x, float y) {
+        mapUiPositionTextView.setText("UI POSITION\n" + "x: " + x + "\n" + "y: " + y);
+    }
+
+    @Override
+    public void onImageMapPositionChange(float x, float y) {
+        mapImagePositionTextView.setText("IMAGE POSITION\n" + "x: " + x + "\n" + "y: " + y);
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener
@@ -291,13 +265,13 @@ public class MapActivity extends AppCompatActivity implements OnMapPositionChang
         }
     }
 
-    public void addNewWiFiTransmitter(String id,  double xCoord, double yCoord, double transmitPower){
+    public void addNewWifiTransmitter(String id, double xCoord, double yCoord, double transmitPower){
         wifiTransmitterList.add(new Transmitter(id, xCoord, yCoord, transmitPower));
     }
     public void addNewBleTransmitter(String id,  double xCoord, double yCoord, double transmitPower){
         bleTransmitterList.add(new Transmitter(id, xCoord, yCoord, transmitPower));
     }
-    public void deleteWifFiTransmitters()
+    public void deleteWifiTransmitters()
     {
         wifiTransmitterList.clear();
     }

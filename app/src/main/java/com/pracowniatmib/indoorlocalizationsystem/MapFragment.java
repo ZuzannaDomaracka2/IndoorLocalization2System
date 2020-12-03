@@ -1,17 +1,13 @@
 package com.pracowniatmib.indoorlocalizationsystem;
 
-import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
-import android.graphics.Path;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -20,9 +16,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class MapFragment extends Fragment {
 
@@ -64,17 +57,18 @@ public class MapFragment extends Fragment {
 
     public void moveMap(float x, float y) {
         mapHolderFragment.moveMap(x, y);
-        onMapPositionChangeListener.onMapPositionChange(mapHolderFragment.getMapX(), mapHolderFragment.getMapY());
+        onMapPositionChangeListener.onUiMapPositionChange(mapHolderFragment.getUiMapX(), mapHolderFragment.getUiMapY());
+        onMapPositionChangeListener.onImageMapPositionChange(mapHolderFragment.getImageMapX(), mapHolderFragment.getImageMapY());
     }
 
     public float getMapX()
     {
-        return mapHolderFragment.getMapX();
+        return mapHolderFragment.getUiMapX();
     }
 
     public float getMapY()
     {
-        return mapHolderFragment.getMapY();
+        return mapHolderFragment.getUiMapY();
     }
 
     public void rotateCursor(int angle) {

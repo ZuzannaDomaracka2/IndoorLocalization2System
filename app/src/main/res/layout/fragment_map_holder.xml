@@ -29,56 +29,10 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:textColor="#000000"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/mapView"
         app:layout_constraintTop_toTopOf="@+id/mapView" />
-
-    <ImageView
-        android:id="@+id/blePointView"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="188dp"
-        android:layout_marginBottom="136dp"
-        android:src="@drawable/ble_point"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/wifiPointView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="340dp"
-        android:layout_marginBottom="500dp"
-        android:src="@drawable/wifi_point"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/otherUserCursorView"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="692dp"
-        android:rotation="180"
-        android:src="@drawable/other_user_cursor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="235dp"
-        tools:layout_editor_absoluteY="247dp"
-        tools:src="@tools:sample/avatars" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="235dp"
-        tools:layout_editor_absoluteY="247dp"
-        tools:src="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
