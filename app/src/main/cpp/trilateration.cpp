@@ -5,6 +5,7 @@
 #include <cassert>
 #include <limits>
 #include <chrono>
+//extern "C" JNIEXPORT jstring JNICALL
 
 using std::vector;
 using std::pair;

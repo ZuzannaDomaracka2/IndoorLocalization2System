@@ -1,6 +1,7 @@
 ﻿#include <cstdlib>
 #include <iostream>
 #include <vector>
+//extern "C" JNIEXPORT jstring JNICALL
 using namespace std;
 
 vector<double> sr_ruchoma(vector<double> vector1, int ilosc_probek)

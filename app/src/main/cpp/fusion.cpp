@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <jni.h>
+//extern "C" JNIEXPORT jstring JNICALL
 using namespace std;
 
 double variance(vector<double> vector1)
