@@ -173,7 +173,7 @@ public:
 	}
 };
 
-int main(int argc, char* argv) {
+int main(int argc, char** argv) {
 	std::cout << "Begin testing:\n";
 	std::cout << "Adding beacons:\n";
 	vector<Beacon> Beacons;
